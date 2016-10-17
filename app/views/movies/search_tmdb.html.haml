@@ -1,0 +1,20 @@
+= form_tag movies_search_tmdb_path, :method => :post do
+  %table#movies
+    %thead
+      %tr
+        %th{:class => @title_header} Title
+        %th Rating
+        %th{:class => @date_header} Release Date
+        %th More Info
+    %tbody
+      - @movies.each do |movie|
+        %tr
+          %td= movie[:title] 
+          %td= movie[:rating]
+          %td= movie[:release]
+          %td= check_box_tag 'accept'
+  %h4 Search for movie titles containing:
+  = text_field_tag 'search_terms'
+  = submit_tag 'Search TMDb'
+
+= link_to 'Return to Movie List', movies_path

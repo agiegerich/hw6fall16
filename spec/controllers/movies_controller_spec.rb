@@ -20,5 +20,20 @@ describe MoviesController do
       post :search_tmdb, {:search_terms => 'Ted'}
       expect(assigns(:movies)).to eq(fake_results)
     end 
+    it 'should go to the movies home if blank search term is entered' do
+      post :search_tmdb, {:search_terms => ''}
+      expect(response).to redirect_to(movies_path)
+    end
+    it 'should go to the movies home if nil search term is recieved' do
+      post :search_tmdb, {:search_terms => nil}
+      expect(response).to redirect_to(movies_path)
+    end
+    it 'should assign searchterm to what was searched for' do
+      movie_name = 'SPAGETT AND THE QUEST FOR THE GOLDEN TREASURE'
+      fake_results = [double('Movie'), double('Movie')]
+      allow(Movie).to receive(:find_in_tmdb).and_return (fake_results)
+      post :search_tmdb, {:search_terms => movie_name }
+      expect(assigns(:searchterm)).to eq(movie_name)
+    end
   end
 end
