@@ -81,7 +81,14 @@ class MoviesController < ApplicationController
   end
   
   def add_tmdb
-    params[:tmdb_movies].each do |key, val|
+    
+    if params[:checkbox] == nil or params[:checkbox].length == 0 then
+      flash[:notice] = "No movies selected"
+      redirect_to movies_path
+      return
+    end
+    
+    params[:checkbox].each do |key, val|
       Movie.create_from_tmdb key
     end
     redirect_to movies_path

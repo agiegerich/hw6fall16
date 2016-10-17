@@ -5,7 +5,7 @@ class Movie < ActiveRecord::Base
   @@key = 'f4702b08c0ac6ea5b51425788bb26562'
   
   def self.all_ratings
-    %w(G PG PG-13 NC-17 R)
+    %w(G PG PG-13 NC-17 R NR)
   end
   
  class Movie::InvalidKeyError < StandardError ; end
@@ -15,17 +15,19 @@ class Movie < ActiveRecord::Base
     us_releases = releases.select do |country|
       country["iso_3166_1"] == 'US'
     end
-        
-    if us_releases.length != 0 
-      release = us_releases[0]
-    elsif releases.length != 0
-      release = releases[0]
-    else
-      release = {"certification" => "n/a", "release_date" => "n/a"}
+    
+    us_rated_releases = us_releases.select do |country|
+      country["certification"] != nil and country["certification"] != ''
     end
-        
-    if release["certification"] == '' then release["certification"] = 'n/a' end
-    if release["release_date"] == '' then release["release_date"] = 'n/a' end
+       
+    if us_rated_releases.length != 0
+      release = us_rated_releases[0]
+    elsif us_releases.length != 0 
+      release = us_releases[0]
+      release['certification'] = 'NR'
+    else
+      release = {"certification" => "NR", "release_date" => ""}
+    end
         
     movie = {
       :title => title,
