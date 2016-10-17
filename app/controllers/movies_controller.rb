@@ -1,3 +1,4 @@
+require 'pp'
 class MoviesController < ApplicationController
 
   def movie_params
@@ -68,8 +69,22 @@ class MoviesController < ApplicationController
       return
     end
     @movies=Movie.find_in_tmdb(params[:search_terms])
+    
+    if @movies.size == 0
+      flash[:notice] = "No matching movies were found on TMDb"
+      redirect_to movies_path
+      return
+    end
+    
     @searchterm = params[:search_terms]
     render 'search_tmdb'
+  end
+  
+  def add_tmdb
+    params[:tmdb_movies].each do |key, val|
+      Movie.create_from_tmdb key
+    end
+    redirect_to movies_path
   end
 
 end
